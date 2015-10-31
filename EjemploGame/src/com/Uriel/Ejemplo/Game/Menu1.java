@@ -8,6 +8,7 @@ public class Menu1 extends BasicGameState{
 	Monillo otroMonillo;
 	Control controlador;
 	Caja caja;
+	Triangulo triangulo;
 	
 	public Menu1(int state){
 		
@@ -16,49 +17,30 @@ public class Menu1 extends BasicGameState{
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		
+		mono = new Monillo("res/cosarara.gif",240,70);
+		otroMonillo = new Monillo("res/cosarara.gif",320,20);
+		caja = new Caja(0,300,640,20);
+		triangulo = new Triangulo(0,250,400,50);
+		
 		controlador = new Control();
 		controlador.add(mono);
 		controlador.add(otroMonillo);
-		//controlador.add(caja);
-		
-		//caja = new Caja(60,30);
-		mono = new Monillo("res/cosarara.gif",320,70);
-		otroMonillo = new Monillo("res/cosarara.gif",240,20);
+		controlador.add(caja);
+		controlador.add(triangulo);
 	}
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		mono.Update();
 		otroMonillo.Update();
-		//caja.Update(gc, sbg, g);
+		caja.Update(gc, sbg, g);
+		triangulo.Update(gc, sbg, g);
 	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-		Input input = gc.getInput();
-		
-		if(input.isKeyDown(Input.KEY_A)){
-			mono.moveLeft(delta);
-		}
-		if(input.isKeyDown(Input.KEY_D)){
-			mono.moveRight(delta);
-		}
-		if(input.isKeyPressed(Input.KEY_SPACE)){
-			mono.jump();
-		}
-		/*if(otroMonillo.intersects(mono)){
-			System.out.println("Están cerca");	
-		}*/
-		if(controlador.checkCollision(mono, 0f))
-		{
-			System.out.println("lalala");
-		}
-		if(!controlador.checkCollision(mono, delta)){
-		
-		}
-		mono.gravity(delta);
-		//caja.gravity(delta);
-		otroMonillo.gravity(delta);
+		mono.moverse(controlador, gc, delta);
+		otroMonillo.gravity(delta,controlador);
 	}
 
 	@Override
