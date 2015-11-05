@@ -25,12 +25,12 @@ public class Menu1 extends BasicGameState{
 		
 		
 		Image la = new Image("res/nuevomono.png");
-		mono = new Monillo(la,100,10);
-		otroMonillo = new Monillo(la,320,20);
+		mono = new Monillo(la, 100, 10);
+		otroMonillo = new Monillo(la, 320, 20);
 		caja = new Caja(0, 300, 640, 20);
-		caja2 = new Caja(40,160, 30, 50);
+		caja2 = new Caja(40, 160, 30, 50);
 		triangulo = new Triangulo(0, 250, 250, 50, Side.LEFT);
-		triangulo2 = new Triangulo(250,250, 250, 50, Side.RIGHT);
+		triangulo2 = new Triangulo(250, 250, 250, 50, Side.RIGHT);
 		
 		controlador = new Control();
 		controlador.add(mono);
