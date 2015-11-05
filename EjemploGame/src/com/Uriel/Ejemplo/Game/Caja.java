@@ -13,14 +13,19 @@ public class Caja extends GameObject{
 		super.width = width;
 		super.height = height;
 	}
-
+	
 	@Override
-	public void Update() throws SlickException {
+	public void init() {
 		
 	}
 	
-	public void Update(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
+	public void Render(Graphics g) throws SlickException{
 		super.boundingBox = new Rectangle(super.positionX, super.positionY, width, height);
 		g.drawRect(super.positionX, super.positionY, width, height);
+	}
+
+	@Override
+	public void Update(int delta) throws SlickException {
+		
 	}
 }

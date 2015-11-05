@@ -1,59 +1,63 @@
 package com.Uriel.Ejemplo.Game;
 
-import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tests.xml.Entity;
 
-public abstract class GameObject extends Entity{
-	protected String path;
-	protected float positionX;
-	protected float positionY;
-	protected int width;
-	protected int height;
-	protected float weight;
-	protected Shape boundingBox = null;
+public abstract class GameObject extends Rigid{
+	
 	protected float inicialVelocityY = 0;
-	protected float maxVelocityX = 0;
+	protected float maxVelocity = 0;
 	protected boolean inGround;
 	private float timer = 0;
 	private static final float aceleration = 9.8f;
 	
+	//CONSTRUCTORS
 	public GameObject(){
-		
+		super();
 	}
+	
 	public GameObject(float positionX, float positionY){
-		this.positionX = positionX;
-		this.positionY = positionY;
+		super(positionX, positionY);
 	}
 	
-	public GameObject(String path, float positionX, float positionY){
-		this.path = path;
-		this.positionX = positionX;
-		this.positionY = positionY;
+	public GameObject(Image image, float positionX, float positionY){
+		super(image, positionX, positionY);
 	}
 	
+	public GameObject(float positionX, float positionY, int width, int height){
+		super(positionX, positionY, width, height);
+	}
+	
+	public GameObject(Image image, float positionX, float positionY, int width, int height){
+		this(image, positionX, positionY);
+		this.width = width;
+		this.height = height;
+	}
+	
+	public GameObject(Image image, float positionX, float positionY, int width, int height, int spriteX, int spriteY, int frames, int duration) throws SlickException{
+		super(image, positionX, positionY, width, height);
+		this.animation = this.getAnimation(this.image, spriteX, spriteY, this.width, this.height, frames, duration);
+	}
+	
+	//FUNCTIONS
 	public void moveRight(float delta){
-		this.positionX += Math.abs(delta) * maxVelocityX;
+		this.positionX += Math.abs(delta) * maxVelocity;
 	}
 	
 	public void moveLeft(float delta){
-		this.positionX -= Math.abs(delta) * maxVelocityX;
+		this.positionX -= Math.abs(delta) * maxVelocity;
 	}
 	
 	public void moveUp(float delta){
-		this.positionY -= Math.abs(delta) * maxVelocityX;
+		this.positionY -= Math.abs(delta) * maxVelocity;
 	}
 	
-	public boolean checkCollision(){
-		return Math.floor(this.positionY) <= 330;
-	}
-	
-	public boolean checkCollision(float positionY){
-		return Math.floor(positionY) <= 330;
+	public void moveDown(float delta){
+		this.positionY += Math.abs(delta) * maxVelocity;
 	}
 	
 	/*public boolean checkRange(GameObject go, float range){
@@ -61,16 +65,16 @@ public abstract class GameObject extends Entity{
 			return true;
 		}
 		return false;
-	}*/
+	}
 	
 	private float distance(float dist1X, float dist1Y, float dist2X, float dist2Y){
 		return (float) Math.sqrt(Math.pow(dist1X - dist2X,2) + Math.pow(dist1Y - dist2Y,2));
-	}
+	}*/
 	
 	public void gravity(float delta, Control controlador) throws SlickException{
 		float timer2 = timer / 1000f;
 		float deltaY = this.inicialVelocityY * timer2 - aceleration * timer2 * timer2 / 2f;
-		if(controlador.checkCollision(this, 0f,-deltaY) != null){
+		if(controlador.checkCollision(this, 0f,-deltaY,false) != null){
 			this.inicialVelocityY = 0;
 			timer = 0;
 			inGround = true;
@@ -81,20 +85,20 @@ public abstract class GameObject extends Entity{
 		}
 	}
 	
-	public abstract void Update() throws SlickException;
 	
+	//GETTERS AND SETTERS
 	public boolean isInGround(){
 		return inGround;
 	}
 	
-	public Shape getBoundingBox() {
-	  return this.boundingBox;
+	public Animation getAnimation(Image i, int spriteX, int spriteY, int spriteWidth, int spriteHeight, int frames, int duration){
+		Animation a = new Animation(false);
+		for(int y = 0; y < spriteY; y++){
+			for(int x = 0; x < spriteX; x++){
+				a.addFrame(i.getSubImage(x * spriteWidth, y * spriteHeight, spriteWidth, spriteHeight), duration);
+			}
+		}
+		return a;
 	}
-	
-	public boolean intersects(GameObject go) {
-	    if (this.getBoundingBox() == null || go.getBoundingBox() == null) {
-	        return false;
-	    }
-	    return this.getBoundingBox().intersects(go.getBoundingBox());
-	}
+
 }
