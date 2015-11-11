@@ -15,7 +15,7 @@ public class Triangulo extends GameObject{
 		RIGHT, LEFT, DOWNRIGHT, DOWNLEFT
 	}
 	
-	public Triangulo(float positionX, float positionY, int width, int height, Side side){
+	public Triangulo(float positionX, float positionY, int width, int height, Side side) throws SlickException{
 		super(positionX, positionY, width, height);
 		this.angle = (float) Math.atan2(width, height);
 		this.side = side;

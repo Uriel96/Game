@@ -8,7 +8,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class Caja extends GameObject{
-	public Caja(float positionX, float positionY, int width, int height){
+	public Caja(float positionX, float positionY, int width, int height) throws SlickException{
 		super(positionX,positionY);
 		super.width = width;
 		super.height = height;

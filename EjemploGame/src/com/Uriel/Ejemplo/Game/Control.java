@@ -11,10 +11,10 @@ public class Control extends ArrayList<GameObject>{
 		
 	}
 	
-	public GameObject checkCollision(GameObject ob, float deltaX, float deltaY, boolean considerIgnoreCollision) throws SlickException{
+	public GameObject checkCollision(GameObject ob, float deltaX, float deltaY, boolean considerHasNoCollision) throws SlickException{
 		ob.boundingBox = new Rectangle(ob.positionX+deltaX,ob.positionY+deltaY,32,32);
 		for(GameObject other : this){
-			if(!considerIgnoreCollision || !other.ignoreCollision){
+			if(considerHasNoCollision || other.hasCollision){
 				if(ob != other){
 					if(ob.intersects(other)){
 						return other;

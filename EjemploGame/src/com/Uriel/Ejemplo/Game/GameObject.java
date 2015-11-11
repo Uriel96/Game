@@ -1,11 +1,8 @@
 package com.Uriel.Ejemplo.Game;
 
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.tests.xml.Entity;
 
 public abstract class GameObject extends Rigid{
 	
@@ -16,23 +13,23 @@ public abstract class GameObject extends Rigid{
 	private static final float aceleration = 9.8f;
 	
 	//CONSTRUCTORS
-	public GameObject(){
+	public GameObject() throws SlickException{
 		super();
 	}
 	
-	public GameObject(float positionX, float positionY){
+	public GameObject(float positionX, float positionY) throws SlickException{
 		super(positionX, positionY);
 	}
 	
-	public GameObject(Image image, float positionX, float positionY){
+	public GameObject(Image image, float positionX, float positionY) throws SlickException{
 		super(image, positionX, positionY);
 	}
 	
-	public GameObject(float positionX, float positionY, int width, int height){
+	public GameObject(float positionX, float positionY, int width, int height) throws SlickException{
 		super(positionX, positionY, width, height);
 	}
 	
-	public GameObject(Image image, float positionX, float positionY, int width, int height){
+	public GameObject(Image image, float positionX, float positionY, int width, int height) throws SlickException{
 		this(image, positionX, positionY);
 		this.width = width;
 		this.height = height;
@@ -40,7 +37,7 @@ public abstract class GameObject extends Rigid{
 	
 	public GameObject(Image image, float positionX, float positionY, int width, int height, int spriteX, int spriteY, int frames, int duration) throws SlickException{
 		super(image, positionX, positionY, width, height);
-		this.animation = this.getAnimation(this.image, spriteX, spriteY, this.width, this.height, frames, duration);
+		//this.animation = this.getAnimation(this.image, spriteX, spriteY, this.width, this.height, frames, duration);
 	}
 	
 	//FUNCTIONS

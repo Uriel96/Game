@@ -1,5 +1,7 @@
 package com.Uriel.Ejemplo.Game;
 
+import java.util.LinkedList;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -7,7 +9,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Shape;
 
 public abstract class Rigid{
-	protected Animation animation;
+	protected Animation animation[];
 	protected Image image;
 	protected float positionX;
 	protected float positionY;
@@ -15,31 +17,32 @@ public abstract class Rigid{
 	protected int height;
 	protected float weight;
 	protected Shape boundingBox = null;
-	protected boolean ignoreCollision = false;
+	protected boolean hasCollision = true;
 	
 	//CONSTRUCTORS
-	public Rigid(){
+	public Rigid() throws SlickException{
+		animation = new Animation[8];
 		init();
 	}
 	
-	public Rigid(float positionX, float positionY){
+	public Rigid(float positionX, float positionY) throws SlickException{
 		this();
 		this.positionX = positionX;
 		this.positionY = positionY;
 	}
 	
-	public Rigid(Image image, float positionX, float positionY){
+	public Rigid(Image image, float positionX, float positionY) throws SlickException{
 		this(positionX, positionY);
 		this.image = image;
 	}
 	
-	public Rigid(float positionX, float positionY, int width, int height){
+	public Rigid(float positionX, float positionY, int width, int height) throws SlickException{
 		this(positionX, positionY);
 		this.width = width;
 		this.height = height;
 	}
 	
-	public Rigid(Image image, float positionX, float positionY, int width, int height){
+	public Rigid(Image image, float positionX, float positionY, int width, int height) throws SlickException{
 		this(image, positionX, positionY);
 		this.width = width;
 		this.height = height;
@@ -72,7 +75,7 @@ public abstract class Rigid{
 	
 	
 	//ABSTRACT METHODS
-	public abstract void init();
+	public abstract void init() throws SlickException;
 	
 	public abstract void Render(Graphics g) throws SlickException;
 	
