@@ -1,13 +1,18 @@
-package com.Uriel.Ejemplo.Game;
+package com.Team.GameName.Utilities;
+
+import java.util.LinkedList;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import com.Team.GameName.Environment.TrianglePlatform;
+
 public abstract class GameObject extends Rigid{
 	
 	protected float inicialVelocityY = 0;
-	protected float maxVelocity = 0;
+	protected float maxVelocityY;
+	protected float maxVelocityX;
 	protected boolean inGround;
 	private float timer = 0;
 	private static final float aceleration = 9.8f;
@@ -18,19 +23,13 @@ public abstract class GameObject extends Rigid{
 	}
 	
 	public GameObject(float positionX, float positionY) throws SlickException{
-		super(positionX, positionY);
-	}
-	
-	public GameObject(Image image, float positionX, float positionY) throws SlickException{
-		super(image, positionX, positionY);
+		super();
+		super.positionX = positionX;
+		super.positionY = positionY;
 	}
 	
 	public GameObject(float positionX, float positionY, int width, int height) throws SlickException{
-		super(positionX, positionY, width, height);
-	}
-	
-	public GameObject(Image image, float positionX, float positionY, int width, int height) throws SlickException{
-		this(image, positionX, positionY);
+		this(positionX, positionY);
 		this.width = width;
 		this.height = height;
 	}
@@ -41,20 +40,36 @@ public abstract class GameObject extends Rigid{
 	}
 	
 	//FUNCTIONS
-	public void moveRight(float delta){
-		this.positionX += Math.abs(delta) * maxVelocity;
+	/*public void moveRight(float delta){
+		this.positionX += Math.abs(delta) * maxVelocityX;
 	}
 	
 	public void moveLeft(float delta){
-		this.positionX -= Math.abs(delta) * maxVelocity;
+		this.positionX -= Math.abs(delta) * maxVelocityX;
 	}
 	
 	public void moveUp(float delta){
-		this.positionY -= Math.abs(delta) * maxVelocity;
+		this.positionY -= Math.abs(delta) * maxVelocityX;
 	}
 	
 	public void moveDown(float delta){
-		this.positionY += Math.abs(delta) * maxVelocity;
+		this.positionY += Math.abs(delta) * maxVelocityX;
+	}*/
+	
+	public boolean move(Controller controller, float delta, Direction direction) throws SlickException{
+		float deltaPosition = (direction == Direction.Right ? 1 : -1) * Math.abs(delta) * maxVelocityX;
+		LinkedList<Rigid> collision = controller.checkListCollision(this, deltaPosition, 0);
+		if(collision == null){
+			this.positionX += deltaPosition;
+		}else{
+			if(collision.size() == 1 && collision.get(0) instanceof TrianglePlatform){
+				this.positionX += deltaPosition * (float)Math.sin(((TrianglePlatform)collision.get(0)).getAngle());
+				this.positionY -= Math.abs(deltaPosition * (float)Math.cos(((TrianglePlatform)collision.get(0)).getAngle()));
+				return true;
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	/*public boolean checkRange(GameObject go, float range){
@@ -68,10 +83,11 @@ public abstract class GameObject extends Rigid{
 		return (float) Math.sqrt(Math.pow(dist1X - dist2X,2) + Math.pow(dist1Y - dist2Y,2));
 	}*/
 	
-	public void gravity(float delta, Control controlador) throws SlickException{
+	public void gravity(Controller controller, float delta) throws SlickException{
 		float timer2 = timer / 1000f;
 		float deltaY = this.inicialVelocityY * timer2 - aceleration * timer2 * timer2 / 2f;
-		if(controlador.checkCollision(this, 0f,-deltaY,false) != null){
+		
+		if(controller.checkCollision(this, 0f,-deltaY) != null){
 			this.inicialVelocityY = 0;
 			timer = 0;
 			inGround = true;
@@ -80,8 +96,7 @@ public abstract class GameObject extends Rigid{
 			positionY -= deltaY;
 			inGround = false;
 		}
-	}
-	
+	}	
 	
 	//GETTERS AND SETTERS
 	public boolean isInGround(){

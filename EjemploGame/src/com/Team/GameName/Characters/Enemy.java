@@ -1,15 +1,18 @@
-package com.Uriel.Ejemplo.Game;
+package com.Team.GameName.Characters;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-public class Enemigo extends GameObject{
+import com.Team.GameName.Utilities.Controller;
+import com.Team.GameName.Utilities.GameObject;
+
+public class Enemy extends GameObject{
 	
 	private int vida;
 	
-	public Enemigo(Image image, float positionX, float positionY, int width, int height, int spriteX, int spriteY, int frames, int duration) throws SlickException {
+	public Enemy(Image image, float positionX, float positionY, int width, int height, int spriteX, int spriteY, int frames, int duration) throws SlickException {
 		super(image, positionX, positionY, width, height, spriteX, spriteY, frames, duration);
 	}
 
@@ -28,7 +31,7 @@ public class Enemigo extends GameObject{
 	}
 
 	@Override
-	public void Update(int delta) throws SlickException {
+	public void Update(Controller controller, int delta) throws SlickException {
 		
 	}
 	
