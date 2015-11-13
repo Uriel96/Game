@@ -54,6 +54,22 @@ public abstract class Rigid{
 		return this.boundingBox;
 	}
 	
+	public float getPositionX() {
+		return positionX;
+	}
+
+	public void setPositionX(float positionX) {
+		this.positionX = positionX;
+	}
+
+	public float getPositionY() {
+		return positionY;
+	}
+
+	public void setPositionY(float positionY) {
+		this.positionY = positionY;
+	}
+	
 	
 	//ABSTRACT METHODS
 	public abstract void init() throws SlickException;

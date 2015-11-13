@@ -96,7 +96,7 @@ public abstract class GameObject extends Rigid{
 			positionY -= deltaY;
 			inGround = false;
 		}
-	}	
+	}
 	
 	//GETTERS AND SETTERS
 	public boolean isInGround(){

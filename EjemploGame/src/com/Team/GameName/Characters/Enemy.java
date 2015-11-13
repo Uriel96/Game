@@ -6,19 +6,18 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.Team.GameName.Utilities.Controller;
-import com.Team.GameName.Utilities.GameObject;
 
-public class Enemy extends GameObject{
+public abstract class Enemy extends Character{
 	
-	private int vida;
+	private float x;
 	
 	public Enemy(Image image, float positionX, float positionY, int width, int height, int spriteX, int spriteY, int frames, int duration) throws SlickException {
-		super(image, positionX, positionY, width, height, spriteX, spriteY, frames, duration);
+		x = super.getPositionX();
 	}
 
 	@Override
 	public void init() throws SlickException {
-		
+
 	}
 
 	@Override
@@ -26,13 +25,82 @@ public class Enemy extends GameObject{
 		g.setColor(Color.red);
 		g.drawRect(super.positionX+5, super.positionY-11, 21, 6);
 		g.setColor(Color.green);
-		g.fillRect(super.positionX+5, super.positionY-10, (float) (vida*0.2), 5);
+		g.fillRect(super.positionX+5, super.positionY-10, (float) (super.health*0.2), 5);
 		g.setColor(Color.white);
 	}
 
 	@Override
 	public void Update(Controller controller, int delta) throws SlickException {
 		
+		
 	}
+	
+	public void Update2(Controller controller, int delta, MainCharacter Monillo) throws SlickException {
+		if (checkSight(controller,Monillo) == true)
+		{
+			chase(controller, delta, Monillo);
+			
+		}
+		else
+		{
+			returnPosition(controller,delta);
+		}
+		
+	}
+	
+	@Override
+	void applyDamage(Graphics g) throws SlickException {
+		
+	}
+	
+	public boolean checkSight(Controller controller, MainCharacter Monillo){
+		
+		boolean OnSight = false;
+		boolean CheckRange = false;
+		OnSight = controller.doRayCast(Monillo);
+		CheckRange = controller.checkRange(Monillo);
+		if (OnSight && CheckRange)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public void chase(Controller controller, float delta, MainCharacter Monillo) throws SlickException{
+		if(controller.getRange(this,Monillo) > 5)
+		{
+			if(Monillo.getPositionX() < this.positionX){
+			this.move(controller, delta, Direction.Left);
+			}
+			if(Monillo.getPositionX() > this.positionX){
+			this.move(controller, delta, Direction.Right);
+			}
+		}
+	}
+	
+	
+	public void returnPosition(Controller controller, float delta) throws SlickException{
+		
+		if(Math.abs(x - this.positionX) < 5)
+		{
+			this.move(controller, delta, Direction.Left);
+			
+		}
+		if(Math.abs(x - this.positionX) > 5)
+		{
+			this.move(controller, delta, Direction.Right);
+			
+		}
+		
+	}
+	
+	public void dead(){
+		
+		
+	}
+	
+
+		
+	
 	
 }

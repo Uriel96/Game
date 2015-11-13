@@ -2,7 +2,6 @@ package com.Team.GameName.Utilities;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
@@ -32,5 +31,20 @@ public class Controller extends ArrayList<Rigid>{
 			}
 		}
 		return (list.size() == 0) ? null : list;
+	}
+	
+	public boolean doRayCast(Rigid monillo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean checkRange(Rigid monillo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public int getRange(Rigid enemy, Rigid monillo) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

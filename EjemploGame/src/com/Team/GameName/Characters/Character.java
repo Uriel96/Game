@@ -1,6 +1,7 @@
 package com.Team.GameName.Characters;
 
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import com.Team.GameName.Utilities.GameObject;
@@ -29,6 +30,11 @@ public abstract class Character extends GameObject{
 		defineStates();
 	}
 	
+	
 	//ABSTRACT METHODS
 	abstract void defineStates() throws SlickException;
+	
+	abstract void attack();
+	
+	abstract void applyDamage(Graphics g) throws SlickException;
 }

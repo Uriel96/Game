@@ -1,15 +1,14 @@
 package com.Team.GameName.Levels;
 
-import org.newdawn.slick.*;
-import org.newdawn.slick.state.*;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 
-import com.Team.GameName.Characters.MainCharacter;
-import com.Team.GameName.Environment.BoxPlatform;
-import com.Team.GameName.Environment.TrianglePlatform;
-import com.Team.GameName.Environment.TrianglePlatform.Side;
-import com.Team.GameName.Utilities.Controller;
-import com.Team.GameName.Utilities.GameObject;
-import com.Team.GameName.Utilities.Rigid;
+import com.Team.GameName.Characters.*;
+import com.Team.GameName.Environment.*;
+import com.Team.GameName.Utilities.*;
 
 public class Level1 extends BasicGameState{
 	MainCharacter mono;
@@ -29,8 +28,8 @@ public class Level1 extends BasicGameState{
 		mono = new MainCharacter(100, 10);
 		caja = new BoxPlatform(0, 300, 640, 20);
 		caja2 = new BoxPlatform(40, 160, 30, 50);
-		triangulo = new TrianglePlatform(0, 250, 250, 50, Side.LEFT);
-		triangulo2 = new TrianglePlatform(350, 250, 250, 50, Side.RIGHT);
+		triangulo = new TrianglePlatform(0, 250, 250, 50, TrianglePlatform.Side.LEFT);
+		triangulo2 = new TrianglePlatform(350, 250, 250, 50, TrianglePlatform.Side.RIGHT);
 		
 		controlador = new Controller();
 		controlador.add(mono);
