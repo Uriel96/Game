@@ -1,4 +1,4 @@
-package com.Uriel.Ejemplo.Game;
+package com.Team.GameName.Levels;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
@@ -12,8 +12,8 @@ public class Game extends StateBasedGame{
 	
 	public Game(String nombreJuego){
 		super(nombreJuego);
-		this.addState(new Menu1(menu));
-		this.addState(new Nivel1(nivel1));
+		this.addState(new Level1(menu));
+		this.addState(new Menu(nivel1));
 	}
 	
 	public void initStatesList(GameContainer gc) throws SlickException {

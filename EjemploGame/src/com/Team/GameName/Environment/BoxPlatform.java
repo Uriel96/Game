@@ -1,4 +1,4 @@
-package com.Uriel.Ejemplo.Game;
+package com.Team.GameName.Environment;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -7,8 +7,12 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class Caja extends GameObject{
-	public Caja(float positionX, float positionY, int width, int height) throws SlickException{
+import com.Team.GameName.Utilities.Controller;
+import com.Team.GameName.Utilities.GameObject;
+import com.Team.GameName.Utilities.Rigid;
+
+public class BoxPlatform extends Rigid{
+	public BoxPlatform(float positionX, float positionY, int width, int height) throws SlickException{
 		super(positionX,positionY);
 		super.width = width;
 		super.height = height;
@@ -25,7 +29,7 @@ public class Caja extends GameObject{
 	}
 
 	@Override
-	public void Update(int delta) throws SlickException {
+	public void Update(Controller controller, int delta) throws SlickException {
 		
 	}
 }

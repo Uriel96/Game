@@ -1,12 +1,15 @@
-package com.Uriel.Ejemplo.Game;
+package com.Team.GameName.Environment;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Polygon;
 
+import com.Team.GameName.Utilities.Controller;
+import com.Team.GameName.Utilities.Rigid;
 
 
-public class Triangulo extends GameObject{
+
+public class TrianglePlatform extends Rigid{
 
 	protected float angle;
 	protected Side side;
@@ -15,9 +18,9 @@ public class Triangulo extends GameObject{
 		RIGHT, LEFT, DOWNRIGHT, DOWNLEFT
 	}
 	
-	public Triangulo(float positionX, float positionY, int width, int height, Side side) throws SlickException{
+	public TrianglePlatform(float positionX, float positionY, int width, int height, Side side) throws SlickException{
 		super(positionX, positionY, width, height);
-		this.angle = (float) Math.atan2(width, height);
+		this.angle = (float) Math.abs(Math.atan2(width, height));
 		this.side = side;
 	}
 	
@@ -31,7 +34,7 @@ public class Triangulo extends GameObject{
 	}
 	
 	@Override
-	public void Render(Graphics g) throws SlickException{
+	public void Render(Graphics g, Controller controller) throws SlickException{
 		float[] points = new float[6];
 		switch(this.side){
 			case DOWNLEFT:
@@ -50,7 +53,7 @@ public class Triangulo extends GameObject{
 	}
 
 	@Override
-	public void Update(int delta) throws SlickException {
+	public void Update(Controller controller, int delta) throws SlickException {
 		//DO NOTHING
 	}
 	

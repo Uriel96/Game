@@ -1,11 +1,11 @@
-package com.Uriel.Ejemplo.Game;
+package com.Team.GameName.Levels;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
 
-public class Nivel1 extends BasicGameState{
+public class Level2 extends BasicGameState{
 	
-	public Nivel1(int state){
+	public Level2(int state){
 		
 	}
 	
