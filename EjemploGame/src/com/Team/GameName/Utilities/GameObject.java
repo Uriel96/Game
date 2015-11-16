@@ -58,13 +58,13 @@ public abstract class GameObject extends Rigid{
 	
 	public boolean move(Controller controller, float delta, Direction direction) throws SlickException{
 		float deltaPosition = (direction == Direction.Right ? 1 : -1) * Math.abs(delta) * maxVelocityX;
-		LinkedList<Rigid> collision = controller.checkListCollision(this, deltaPosition, 0);
+		Rigid collision = controller.checkCollision(this, deltaPosition, 0,Collision.class);
 		if(collision == null){
 			this.positionX += deltaPosition;
 		}else{
-			if(collision.size() == 1 && collision.get(0) instanceof TrianglePlatform){
-				this.positionX += deltaPosition * (float)Math.sin(((TrianglePlatform)collision.get(0)).getAngle());
-				this.positionY -= Math.abs(deltaPosition * (float)Math.cos(((TrianglePlatform)collision.get(0)).getAngle()));
+			if(collision instanceof TrianglePlatform){
+				this.positionX += deltaPosition * (float)Math.sin(((TrianglePlatform)collision).getAngle());
+				this.positionY -= Math.abs(deltaPosition * (float)Math.cos(((TrianglePlatform)collision).getAngle()));
 				return true;
 			}
 			return false;
@@ -84,18 +84,17 @@ public abstract class GameObject extends Rigid{
 	}*/
 	
 	public void gravity(Controller controller, float delta) throws SlickException{
-		float timer2 = timer / 1000f;
-		float deltaY = this.inicialVelocityY * timer2 - aceleration * timer2 * timer2 / 2f;
-		
-		if(controller.checkCollision(this, 0f,-deltaY) != null){
-			this.inicialVelocityY = 0;
-			timer = 0;
-			inGround = true;
-		}else{
-			timer += delta;
-			positionY -= deltaY;
-			inGround = false;
-		}
+			float deltaY = this.inicialVelocityY * timer - aceleration * timer * timer / 2f;
+			deltaY = (float)Math.round(deltaY * 100f) / 100f;
+			if(controller.checkCollision(this, 0f,-deltaY,Collision.class) != null){
+				this.inicialVelocityY = 0;
+				timer = 0.05f;
+				inGround = true;
+			}else{
+				timer += delta/1000f;
+				positionY -= deltaY;
+				inGround = false;
+			}
 	}
 	
 	//GETTERS AND SETTERS

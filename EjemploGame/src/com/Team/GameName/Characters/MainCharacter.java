@@ -33,27 +33,26 @@ public class MainCharacter extends Character{
 	public void moverse(Controller controller, GameContainer gc, float delta) throws SlickException{
 		Input input = gc.getInput();
 		
-		if(input.isKeyDown(Input.KEY_A)){
-			this.move(controller, delta, Direction.Left);
-			super.currentAnimation = getAnimation(State.WALKLEFT);
-		}else if(input.isKeyDown(Input.KEY_D)){
-			this.move(controller, delta, Direction.Right);
-			super.currentAnimation = getAnimation(State.WALKRIGHT);
-		}else if(input.isKeyPressed(Input.KEY_W)){
+		if(input.isKeyPressed(Input.KEY_W)){
 			this.jump();
 		}else if(input.isKeyPressed(Input.KEY_SPACE)){ 
 			if(super.currentWeapon.canAttack()){
 				this.attack();
-				super.currentAnimation = getAnimation(State.ATTACKLEFT);
+				super.setAnimation(State.ATTACKLEFT);
+			}
+		}else if(input.isKeyDown(Input.KEY_A) || input.isKeyDown(Input.KEY_D)){
+			if(input.isKeyDown(Input.KEY_A)){
+				this.move(controller, delta, Direction.Left);
+				super.setAnimation(State.WALKLEFT);
+			}
+			if(input.isKeyDown(Input.KEY_D)){
+				this.move(controller, delta, Direction.Right);
+				super.setAnimation(State.WALKRIGHT);
 			}
 		}else{
-			super.currentAnimation = getAnimation(State.STANDLEFT);
+			super.setAnimation(State.STANDLEFT);
 		}
 		this.gravity(controller, delta);
-	}
-	
-	private Animation getAnimation(State state){
-		return super.states[state.ordinal()];
 	}
 	
 	public void jump(){
@@ -64,9 +63,9 @@ public class MainCharacter extends Character{
 	public void init() throws SlickException {
 		super.width = 27;
 		super.height = 35;
-		super.maxVelocityX = 0.2f;
+		super.maxVelocityX = 0.3f;
 		super.maxVelocityY = 2.0f;
-		this.jumpVelocity = 1.5f;
+		this.jumpVelocity = 2f;
 		this.health = 100;
 		this.currentWeapon = new Sword();
 	}

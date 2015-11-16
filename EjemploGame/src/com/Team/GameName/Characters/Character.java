@@ -4,6 +4,7 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.Team.GameName.Characters.MainCharacter.State;
 import com.Team.GameName.Utilities.GameObject;
 import com.Team.GameName.Weapons.Weapon;
 
@@ -37,6 +38,14 @@ public abstract class Character extends GameObject{
 	
 	public void setCurrentWeapon(Weapon weapon){
 		this.currentWeapon = weapon;
+	}
+	
+	protected Animation getAnimation(State state){
+		return states[state.ordinal()];
+	}
+	
+	protected void setAnimation(State state){
+		this.currentAnimation = this.states[state.ordinal()];
 	}
 	
 	//ABSTRACT METHODS

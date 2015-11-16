@@ -20,7 +20,7 @@ public class Sword extends Weapon{
 	}
 
 	@Override
-	public void Render(Graphics g) throws SlickException {
+	public void Render(Graphics g, Controller controller) throws SlickException {
 		
 	}
 
