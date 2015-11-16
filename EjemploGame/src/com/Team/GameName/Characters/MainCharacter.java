@@ -71,7 +71,7 @@ public class MainCharacter extends Character{
 	}
 
 	@Override
-	public void Render(Graphics g) throws SlickException {
+	public void Render(Graphics g, Controller controller) throws SlickException {
 		if(super.currentAnimation != null){
 			super.currentAnimation.draw(super.positionX, super.positionY, super.width, super.height);
 		}

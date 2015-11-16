@@ -34,7 +34,7 @@ public class TrianglePlatform extends Rigid{
 	}
 	
 	@Override
-	public void Render(Graphics g) throws SlickException{
+	public void Render(Graphics g, Controller controller) throws SlickException{
 		float[] points = new float[6];
 		switch(this.side){
 			case DOWNLEFT:
