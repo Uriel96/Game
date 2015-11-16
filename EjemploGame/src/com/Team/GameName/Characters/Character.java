@@ -30,6 +30,14 @@ public abstract class Character extends GameObject{
 		defineStates();
 	}
 	
+	//GETTERS AND SETTERS
+	public Weapon getCurrentWeapon(){
+		return this.currentWeapon;
+	}
+	
+	public void setCurrentWeapon(Weapon weapon){
+		this.currentWeapon = weapon;
+	}
 	
 	//ABSTRACT METHODS
 	abstract void defineStates() throws SlickException;

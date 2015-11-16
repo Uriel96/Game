@@ -11,6 +11,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import com.Team.GameName.Utilities.Controller;
 import com.Team.GameName.Weapons.Sword;
+import com.Team.GameName.Weapons.Weapon;
 
 public class MainCharacter extends Character{
 	
@@ -35,18 +36,18 @@ public class MainCharacter extends Character{
 		if(input.isKeyDown(Input.KEY_A)){
 			this.move(controller, delta, Direction.Left);
 			super.currentAnimation = getAnimation(State.WALKLEFT);
-		}
-		if(input.isKeyDown(Input.KEY_D)){
+		}else if(input.isKeyDown(Input.KEY_D)){
 			this.move(controller, delta, Direction.Right);
 			super.currentAnimation = getAnimation(State.WALKRIGHT);
-		}
-		if(input.isKeyPressed(Input.KEY_W)){
+		}else if(input.isKeyPressed(Input.KEY_W)){
 			this.jump();
-		}
-		if(input.isKeyDown(Input.KEY_SPACE)){ 
+		}else if(input.isKeyPressed(Input.KEY_SPACE)){ 
 			if(super.currentWeapon.canAttack()){
 				this.attack();
+				super.currentAnimation = getAnimation(State.ATTACKLEFT);
 			}
+		}else{
+			super.currentAnimation = getAnimation(State.STANDLEFT);
 		}
 		this.gravity(controller, delta);
 	}
@@ -86,27 +87,28 @@ public class MainCharacter extends Character{
 
 	@Override
 	public void defineStates() throws SlickException {
-		Image derecha = new Image("res/nuevomonoderecha.png");
-		Image izquierda = new Image("res/nuevomonoizquierda.png");
+		Image walk = new Image("res/Enemy/Pirate1/pirate_walk_right.jpg");
+		Image stand = new Image("res/Enemy/Pirate1/pirate_stand_right.jpg");
+		Image scare = new Image("res/Enemy/Pirate1/pirate_scare_right.jpg");
 		super.states = new Animation[7];
 		//WALK
-		super.states[0] = super.getAnimation(derecha, 8, 1, 108, 140, 8, 50);
-		super.states[1] = super.getAnimation(izquierda, 8, 1, 108, 140, 8, 50);
+		super.states[0] = super.getAnimation(walk, 6, 1, 41, 59, 6, 50);
+		super.states[1] = super.getAnimation(walk, 6, 1, 41, 59, 6, 50);
 		//STAND
-		super.states[2] = super.getAnimation(derecha, 8, 1, 108, 140, 8, 50);
-		super.states[3] = super.getAnimation(izquierda, 8, 1, 108, 140, 8, 50);
+		super.states[2] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
+		super.states[3] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
 		//ATTACK
-		super.states[4] = super.getAnimation(derecha, 8, 1, 108, 140, 8, 5);
-		super.states[5] = super.getAnimation(izquierda, 8, 1, 108, 140, 8, 5);
+		super.states[4] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
+		super.states[5] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
 		//DIE
-		super.states[6] = super.getAnimation(derecha, 8, 1, 108, 140, 8, 50);
+		super.states[6] = super.getAnimation(stand, 8, 1, 108, 140, 8, 50);
 		super.currentAnimation = states[0];
 	}
 
 	
 	@Override
 	public void attack() {
-		super.currentAnimation = getAnimation(State.ATTACKLEFT);
+		((Sword)super.currentWeapon).swing();
 	}
 	
 
@@ -118,4 +120,6 @@ public class MainCharacter extends Character{
 		g.fillRect(super.positionX + 5, super.positionY - 10, (float) (super.health * 0.2), 5);
 		g.setColor(Color.white);
 	}
+
+	
 }
