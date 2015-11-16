@@ -21,15 +21,6 @@ public abstract class Enemy extends Character{
 	}
 
 	@Override
-	public void Render(Graphics g) throws SlickException {
-		g.setColor(Color.red);
-		g.drawRect(super.positionX+5, super.positionY-11, 21, 6);
-		g.setColor(Color.green);
-		g.fillRect(super.positionX+5, super.positionY-10, (float) (super.health*0.2), 5);
-		g.setColor(Color.white);
-	}
-
-	@Override
 	public void Update(Controller controller, int delta) throws SlickException {
 		
 		
@@ -53,12 +44,12 @@ public abstract class Enemy extends Character{
 		
 	}
 	
-	public boolean checkSight(Controller controller, MainCharacter Monillo){
+	public boolean checkSight(Controller controller, MainCharacter mc){
 		
 		boolean OnSight = false;
 		boolean CheckRange = false;
-		OnSight = controller.doRayCast(Monillo);
-		CheckRange = controller.checkRange(Monillo);
+		OnSight = controller.doRayCast(mc, positionX, positionY, 32);
+		CheckRange = controller.checkRange(mc, positionX, positionY, 20);
 		if (OnSight && CheckRange)
 		{
 			return true;

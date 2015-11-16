@@ -31,7 +31,7 @@ public class Level1 extends BasicGameState{
 		triangulo = new TrianglePlatform(0, 250, 250, 50, TrianglePlatform.Side.LEFT);
 		triangulo2 = new TrianglePlatform(350, 250, 250, 50, TrianglePlatform.Side.RIGHT);
 		
-		controlador = new Controller();
+		controlador = new Controller(0,0);
 		controlador.add(mono);
 		controlador.add(caja);
 		controlador.add(caja2);
@@ -42,7 +42,7 @@ public class Level1 extends BasicGameState{
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		for(Rigid go : controlador){
-			go.Render(g);
+			go.Render(g, controlador);
 		}
 	}
 
