@@ -1,6 +1,5 @@
 package com.Team.GameName.Characters;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 

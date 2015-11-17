@@ -17,6 +17,7 @@ public abstract class Rigid{
 	private int widthImage;
 	private int heightImage;
 	private boolean repeat;
+	protected Direction currentDirection = Direction.Right;
 	
 	protected enum Direction{
 		Left,Right
@@ -52,6 +53,10 @@ public abstract class Rigid{
 	//GETTERS AND SETTERS
 	public Shape getBoundingBox() {
 		return this.boundingBox;
+	}
+	
+	public void setDirection(Direction direction){
+		this.currentDirection = direction;
 	}
 	
 	public float getPositionX() {

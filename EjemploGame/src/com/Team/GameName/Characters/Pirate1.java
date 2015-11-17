@@ -45,7 +45,7 @@ public class Pirate1 extends Enemy{
 	}
 
 	@Override
-	void attack() {
+	public void attack(Controller controller) throws SlickException {
 		
 	}
 	
@@ -79,5 +79,6 @@ public class Pirate1 extends Enemy{
 			super.currentAnimation.draw(super.positionX, super.positionY, super.width, super.height);
 		}
 		this.applyDamage(g);
+		g.drawRect(positionX, positionY, width, height);
 	}
 }

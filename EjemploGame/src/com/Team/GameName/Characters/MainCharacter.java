@@ -16,12 +16,9 @@ import com.Team.GameName.Weapons.Weapon;
 public class MainCharacter extends Character{
 	
 	public enum State{
-		WALKRIGHT,
-		WALKLEFT,
-		STANDRIGHT,
-		STANDLEFT,
-		ATTACKRIGHT,
-		ATTACKLEFT,
+		WALK,
+		STAND,
+		ATTACK,
 		DIE
 	}
 	private float jumpVelocity;
@@ -37,20 +34,24 @@ public class MainCharacter extends Character{
 			this.jump();
 		}else if(input.isKeyPressed(Input.KEY_SPACE)){ 
 			if(super.currentWeapon.canAttack()){
-				this.attack();
-				super.setAnimation(State.ATTACKLEFT);
+				System.out.println("laa");
+				this.attack(controller);
+				super.setAnimation(State.ATTACK);
 			}
 		}else if(input.isKeyDown(Input.KEY_A) || input.isKeyDown(Input.KEY_D)){
+			
 			if(input.isKeyDown(Input.KEY_A)){
 				this.move(controller, delta, Direction.Left);
-				super.setAnimation(State.WALKLEFT);
+				currentDirection = Direction.Left;
 			}
 			if(input.isKeyDown(Input.KEY_D)){
 				this.move(controller, delta, Direction.Right);
-				super.setAnimation(State.WALKRIGHT);
+				currentDirection = Direction.Right;
 			}
+			super.setAnimation(State.WALK);
+			
 		}else{
-			super.setAnimation(State.STANDLEFT);
+			super.setAnimation(State.STAND);
 		}
 		this.gravity(controller, delta);
 	}
@@ -73,8 +74,12 @@ public class MainCharacter extends Character{
 	@Override
 	public void Render(Graphics g, Controller controller) throws SlickException {
 		if(super.currentAnimation != null){
-			super.currentAnimation.draw(super.positionX, super.positionY, super.width, super.height);
+			if(currentDirection == Direction.Right)
+				super.currentAnimation.draw(super.positionX, super.positionY, super.width, super.height);
+			else
+				super.currentAnimation.draw(super.positionX+super.width, super.positionY, -super.width, super.height);
 		}
+		g.drawRect(positionX, positionY, width, height);
 		this.applyDamage(g);
 	}
 	
@@ -82,6 +87,15 @@ public class MainCharacter extends Character{
 	public void Update(Controller controller, int delta) throws SlickException{
 		super.currentAnimation.update(delta);
 		super.boundingBox = new Rectangle(positionX, positionY, super.width, super.height);
+		
+		if(currentDirection == Direction.Right){
+			super.currentWeapon.setPositionX(this.positionX+this.width+2);
+			super.currentWeapon.setDirection(Direction.Right);
+		}else{
+			super.currentWeapon.setPositionX(this.positionX-4);
+			super.currentWeapon.setDirection(Direction.Left);
+		}
+		super.currentWeapon.setPositionY(this.positionY+(this.height/2.0f));
 	}
 
 	@Override
@@ -89,25 +103,22 @@ public class MainCharacter extends Character{
 		Image walk = new Image("res/Enemy/Pirate1/pirate_walk_right.jpg");
 		Image stand = new Image("res/Enemy/Pirate1/pirate_stand_right.jpg");
 		Image scare = new Image("res/Enemy/Pirate1/pirate_scare_right.jpg");
-		super.states = new Animation[7];
+		super.states = new Animation[4];
 		//WALK
 		super.states[0] = super.getAnimation(walk, 6, 1, 41, 59, 6, 50);
-		super.states[1] = super.getAnimation(walk, 6, 1, 41, 59, 6, 50);
 		//STAND
-		super.states[2] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
-		super.states[3] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
+		super.states[1] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
 		//ATTACK
-		super.states[4] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
-		super.states[5] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
+		super.states[2] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
 		//DIE
-		super.states[6] = super.getAnimation(stand, 8, 1, 108, 140, 8, 50);
+		super.states[3] = super.getAnimation(stand, 8, 1, 108, 140, 8, 50);
 		super.currentAnimation = states[0];
 	}
 
 	
 	@Override
-	public void attack() {
-		((Sword)super.currentWeapon).swing();
+	public void attack(Controller controller) throws SlickException {
+		((Sword)super.currentWeapon).swing(controller);
 	}
 	
 
@@ -120,5 +131,4 @@ public class MainCharacter extends Character{
 		g.setColor(Color.white);
 	}
 
-	
 }

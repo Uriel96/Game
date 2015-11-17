@@ -1,7 +1,5 @@
 package com.Team.GameName.Utilities;
 
-import java.util.LinkedList;
-
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;

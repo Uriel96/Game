@@ -1,13 +1,11 @@
 package com.Team.GameName.Utilities;
 
-import java.awt.Window.Type;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import org.lwjgl.opencl.CLSampler;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Rectangle;
 
 public class Controller extends ArrayList<Rigid>{
 	
@@ -34,7 +32,7 @@ public class Controller extends ArrayList<Rigid>{
 	}
 	
 	public Rigid checkCollision(Rigid ob, float deltaX, float deltaY, Class<?> cls) throws SlickException{
-		ob.boundingBox = new Rectangle(ob.positionX+deltaX,ob.positionY+deltaY,32,32);
+		ob.boundingBox = new Rectangle(ob.positionX+deltaX,ob.positionY+deltaY,ob.width,ob.height);
 		for(Rigid other : this){
 			if(ob != other && cls.isInstance(other) && ob.intersects(other)){
 				return other;
@@ -54,15 +52,27 @@ public class Controller extends ArrayList<Rigid>{
 		return (list.size() == 0) ? null : list;
 	}
 	
-	public LinkedList<Rigid> doRayCastList(Rigid ob, float rayX, float rayY, float range) {
+	/*public <T> LinkedList<T> doRayCastList(Rigid ob, float rayX, float rayY, float range) {
+		Class<T> type = null;
 		Rectangle ray = new Rectangle(rayX,rayY,range,3);
-		LinkedList<Rigid> list = new LinkedList<Rigid>();
+		LinkedList<T> list = new LinkedList<T>();
 		for(Rigid other : this){
-			if(ob != other && ray.intersects(other.boundingBox)){
-				list.add(other);
+			if(ob != other && type.isInstance(other) && ray.intersects(other.boundingBox)){
+				list.add(type.cast(other));
 			}
 		}
 		return (list.size() == 0) ? null : list;
+	}*/
+	
+	public <T> T doRayCastList(Rigid ob, float rayX, float rayY, float range) {
+		Class<T> type = null;
+		Rectangle ray = new Rectangle(rayX,rayY,range,3);
+		for(Rigid other : this){
+			if(ob != other && type.isInstance(other) && ray.intersects(other.boundingBox)){
+				return type.cast(other);
+			}
+		}
+		return null;
 	}
 	
 	public boolean doRayCast(Rigid ob, float rayX, float rayY, float range, Class<?> cls) {

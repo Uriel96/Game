@@ -5,6 +5,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import com.Team.GameName.Characters.MainCharacter.State;
+import com.Team.GameName.Utilities.Controller;
 import com.Team.GameName.Utilities.GameObject;
 import com.Team.GameName.Weapons.Weapon;
 
@@ -48,10 +49,14 @@ public abstract class Character extends GameObject{
 		this.currentAnimation = this.states[state.ordinal()];
 	}
 	
+	public void takeAwayLife(int damage){
+		this.health -= damage;
+	}
+	
 	//ABSTRACT METHODS
 	abstract void defineStates() throws SlickException;
 	
-	abstract void attack();
+	abstract void attack(Controller controller) throws SlickException;
 	
 	abstract void applyDamage(Graphics g) throws SlickException;
 }

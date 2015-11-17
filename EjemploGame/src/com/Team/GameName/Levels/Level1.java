@@ -45,7 +45,7 @@ public class Level1 extends BasicGameState{
 		controlador.add(mono);
 		controlador.add(caja);
 		controlador.add(caja2);
-		controlador.add(triangulo);
+		//controlador.add(triangulo);
 		controlador.add(enemigo);
 		controlador.add(triangulo2);
 		controlador.add(espada);
