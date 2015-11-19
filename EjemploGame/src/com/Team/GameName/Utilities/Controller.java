@@ -1,13 +1,19 @@
 package com.Team.GameName.Utilities;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Rectangle;
 
+import com.Team.GameName.Utilities.Rigid.Direction;
+
 public class Controller extends ArrayList<Rigid>{
+	
+	public Iterator<Rigid> i;
+	public boolean gameOver = false;
 	
 	public int positionX = 0;
 	public int positionY = 0;
@@ -21,112 +27,83 @@ public class Controller extends ArrayList<Rigid>{
 		height = h;
 	}
 	
-	public Rigid checkCollision(Rigid ob, float deltaX, float deltaY) throws SlickException{
-		ob.boundingBox = new Rectangle(ob.positionX+deltaX,ob.positionY+deltaY,32,32);
-		for(Rigid other : this){
-			if(ob != other && ob.intersects(other)){
-				return other;
-			}
-		}
-		return null;
-	}
-	
-	public Rigid checkCollision(Rigid ob, float deltaX, float deltaY, Class<?> cls) throws SlickException{
-		ob.boundingBox = new Rectangle(ob.positionX+deltaX,ob.positionY+deltaY,ob.width,ob.height);
+	public <T> T checkCollision(Rigid ob, float deltaX, float deltaY, Class<T> cls) throws SlickException{
+		ob.setBoundingBox(new Rectangle(ob.getPositionX()+deltaX,ob.getPositionY()+deltaY,32,32));
 		for(Rigid other : this){
 			if(ob != other && cls.isInstance(other) && ob.intersects(other)){
-				return other;
+				return cls.cast(other);
 			}
 		}
 		return null;
 	}
 	
-	public LinkedList<Rigid> checkListCollision(Rigid ob, float deltaX, float deltaY) throws SlickException{
-		ob.boundingBox = new Rectangle(ob.positionX+deltaX,ob.positionY+deltaY,32,32);
-		LinkedList<Rigid> list = new LinkedList<Rigid>();
-		for(Rigid other : this){
-			if(ob != other && ob.intersects(other)){
-				list.add(other);
-			}
-		}
-		return (list.size() == 0) ? null : list;
-	}
-	
-	/*public <T> LinkedList<T> doRayCastList(Rigid ob, float rayX, float rayY, float range) {
-		Class<T> type = null;
-		Rectangle ray = new Rectangle(rayX,rayY,range,3);
+	public <T> LinkedList<T> checkCollisionList(Rigid ob, float deltaX, float deltaY, Class<T> cls) throws SlickException{
+		ob.setBoundingBox(new Rectangle(ob.getPositionX()+deltaX,ob.getPositionY()+deltaY,32,32));
 		LinkedList<T> list = new LinkedList<T>();
 		for(Rigid other : this){
-			if(ob != other && type.isInstance(other) && ray.intersects(other.boundingBox)){
-				list.add(type.cast(other));
+			if(ob != other && ob.intersects(other)){
+				list.add(cls.cast(other));
 			}
 		}
 		return (list.size() == 0) ? null : list;
-	}*/
+	}
 	
-	public <T> T doRayCastList(Rigid ob, float rayX, float rayY, float range) {
-		Class<T> type = null;
-		Rectangle ray = new Rectangle(rayX,rayY,range,3);
+	public <T> T doRayCast(Rigid ob, float rayX, float rayY, float range, Class<T> cls) {
+		Rectangle ray = new Rectangle(ob.getDirection() == Direction.Right ? rayX : rayX-range, rayY,range, 3);
 		for(Rigid other : this){
-			if(ob != other && type.isInstance(other) && ray.intersects(other.boundingBox)){
-				return type.cast(other);
+			if(ob != other && cls.isInstance(other) && ray.intersects(other.getBoundingBox())){
+				return cls.cast(other);
 			}
 		}
 		return null;
 	}
 	
-	public boolean doRayCast(Rigid ob, float rayX, float rayY, float range, Class<?> cls) {
-		// TODO Auto-generated method stub
-		Rectangle ray = new Rectangle(rayX,rayY,range,3);
+	public <T> LinkedList<T> doRayCastList(Rigid ob, float rayX, float rayY, float range, Class<T> cls) {
+		
+		Rectangle ray = new Rectangle(rayX, rayY, ob.getDirection() == Direction.Right ? range : -range, 3);
+		LinkedList<T> list = new LinkedList<T>();
 		for(Rigid other : this){
-			if(ob != other && cls.isInstance(other) && ray.intersects(other.boundingBox)){
-				return true;
+			if(ob != other && cls.isInstance(other) && ray.intersects(other.getBoundingBox())){
+				list.add(cls.cast(other));
 			}
 		}
-		return false;
+		return (list.size() == 0) ? null : list;
 	}
 
-	public LinkedList<Rigid> checkRangeList (Rigid ob, float rangeX, float rangeY, float radius) {
-		// TODO Auto-generated method stub
-		Circle range = new Circle(rangeX,rangeY,radius);
-		LinkedList<Rigid> list = new LinkedList<Rigid>();
+	public <T> LinkedList<T> checkRangeList(Rigid ob, float rangeX, float rangeY, float radius, Class<T> cls) {
+		Circle range = new Circle(rangeX, rangeY, radius);
+		LinkedList<T> list = new LinkedList<T>();
 		for(Rigid other : this){
-			if(ob != other && range.intersects(other.boundingBox)){
-				list.add(other);
+			if(ob != other && cls.isInstance(other) && range.intersects(other.getBoundingBox())){
+				list.add(cls.cast(other));
 			}
 		}
 		return (list.size() == 0) ? null : list;
 	}
 	
-	public boolean checkRange (Rigid ob, float rangeX, float rangeY, float radius) {
-		// TODO Auto-generated method stub
+	public <T> T checkRange(Rigid ob, float rangeX, float rangeY, float radius, Class<T> cls) {
 		Circle range = new Circle(rangeX,rangeY,radius);
 		for(Rigid other : this){
-			if(ob != other && range.intersects(other.boundingBox)){
-				return true;
+			if(ob != other && cls.isInstance(other) && range.intersects(other.getBoundingBox())){
+				return cls.cast(other);
 			}
 		}
-		return false;
+		return null;
 	}
 	
-	public double getRange (Rigid ob, Rigid target) {
-		// TODO Auto-generated method stub
-		double distanceX, distanceY, distance;
-		distanceX = Math.pow(ob.positionX - target.positionX, 2);
-		distanceY = Math.pow(ob.positionY - target.positionY, 2);
-		distance = Math.sqrt(distanceX + distanceY);
-		return distance;
+	public float getRange (Rigid ob, Rigid target) {
+		return (float) Math.sqrt(Math.pow(ob.getPositionX() - target.getPositionX(), 2) + Math.pow(ob.getPositionY() - target.getPositionY(), 2));
 	}
 	
-	public boolean deleteControl(Rigid ob) {
-		return (this.remove(ob));
+	public void deleteControl() {
+		this.i.remove();
 	}
 	
-	public boolean deleteControlList(Rigid ob) {
+	public <T> boolean deleteControl(Class<T> cls) {
 		boolean found = false;
 		for(Rigid other : this){
-			if (ob == other) {
-				this.remove(ob);
+			if (cls.isInstance(other)) {
+				this.remove(other);
 				found = true;
 			}
 		}
@@ -149,6 +126,6 @@ public class Controller extends ArrayList<Rigid>{
 	}
 	
 	public void giveScore(int points) {
-		score = score + points;
+		score += points;
 	}
 }

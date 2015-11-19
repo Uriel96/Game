@@ -1,84 +1,61 @@
 package com.Team.GameName.Characters;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.Team.GameName.Utilities.Controller;
+import com.Team.GameName.Utilities.States;
 import com.Team.GameName.Weapons.Sword;
 
 public class Pirate1 extends Enemy{
-
-	public enum State{
-		WALKRIGHT,
-		WALKLEFT,
-		STANDRIGHT,
-		STANDLEFT,
-		ATTACKRIGHT,
-		ATTACKLEFT,
-		DIE
-	}
-	
+	//CONSTRUCTORS
 	public Pirate1(float positionX, float positionY) throws SlickException {
-		super(positionX, positionY);
+		super(positionX, positionY, 27, 35, 0.2f, 150, 30);
+	}
+	public Pirate1(float positionX, float positionY, float health) throws SlickException {
+		super(positionX, positionY, 27, 35, 0.2f, 150, 30, health);
 	}
 
-	@Override
-	void defineStates() throws SlickException {
-		Image walk = new Image("res/Enemy/Pirate1/pirate_walk_right.jpg");
-		Image stand = new Image("res/Enemy/Pirate1/pirate_stand_right.jpg");
-		Image scare = new Image("res/Enemy/Pirate1/pirate_scare_right.jpg");
-		super.states = new Animation[7];
-		//WALK
-		super.states[0] = super.getAnimation(walk, 6, 1, 41, 59, 6, 50);
-		super.states[1] = super.getAnimation(walk, 6, 1, 41, 59, 6, 50);
-		//STAND
-		super.states[2] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
-		super.states[3] = super.getAnimation(stand, 3, 1, 42, 59, 3, 250);
-		//ATTACK
-		super.states[4] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
-		super.states[5] = super.getAnimation(scare, 8, 1, 108, 140, 8, 5);
-		//DIE
-		super.states[6] = super.getAnimation(stand, 8, 1, 108, 140, 8, 50);
-		super.currentAnimation = states[0];
-	}
-
-	@Override
-	public void attack(Controller controller) throws SlickException {
-		
-	}
-	
-	public void Update2(Controller controller, int delta, MainCharacter Monillo) throws SlickException {
-		this.gravity(controller, delta);
-		if (checkSight(controller,Monillo))
-			chase(controller, delta, Monillo);
-		else
-			returnPosition(controller,delta);
-	}
-
-	@Override
-	public void Update(Controller controller, int delta) throws SlickException {
-		
-	}
-
-	
+	//IMPLEMENTED METHODS
 	@Override
 	public void init() throws SlickException {
-		super.width = 27;
-		super.height = 35;
-		super.maxVelocityX = 0.2f;
-		super.maxVelocityY = 2.0f;
-		this.health = 100;
-		this.currentWeapon = new Sword();
+		super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
 	}
-
 	@Override
-	public void Render(Graphics g, Controller controller) throws SlickException {
-		if(super.currentAnimation != null){
-			super.currentAnimation.draw(super.positionX, super.positionY, super.width, super.height);
+	public void Render(Controller controller, Graphics g) throws SlickException {
+		super.setBoundingBox();
+		if(super.getCurrentAnimation() != null){
+			if(super.getDirection() == Direction.Right)
+				super.getCurrentAnimation().draw(super.getPositionX(), super.getPositionY(), super.getWidth(), super.getHeight());
+			else
+				super.getCurrentAnimation().draw(super.getPositionX()+super.getWidth(), super.getPositionY(), -super.getWidth(), super.getHeight());
 		}
 		this.applyDamage(g);
-		g.drawRect(positionX, positionY, width, height);
+		g.draw(super.getBoundingBox());
+	}
+	@Override
+	public void Update(Controller controller, int delta) throws SlickException {
+		super.getCurrentAnimation().update(delta);
+		super.checkDead(controller);
+		if(super.getCurrentWeapon() != null){
+			if(super.getDirection() == Direction.Right){
+				super.getCurrentWeapon().setPositionX(super.getPositionX()+super.getWidth()+2);
+				super.getCurrentWeapon().setDirection(Direction.Right);
+			}else{
+				super.getCurrentWeapon().setPositionX(super.getPositionX()-4);
+				super.getCurrentWeapon().setDirection(Direction.Left);
+			}
+			super.getCurrentWeapon().setPositionY(super.getPositionY()+super.getHeight()/2.0f);
+		}
+		this.gravity(controller, delta);
+		MainCharacter player = checkSight(controller);
+		if (player != null)
+			chase(controller, delta, player);
+		else
+			returnPosition(controller, delta);
+	}
+	@Override
+	public void attack(Controller controller) throws SlickException {
+		((Sword)super.getCurrentWeapon()).swing(controller);
 	}
 }

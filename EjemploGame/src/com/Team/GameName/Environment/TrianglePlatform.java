@@ -35,7 +35,7 @@ public class TrianglePlatform extends Rigid implements Collision{
 	}
 	
 	@Override
-	public void Render(Graphics g, Controller controller) throws SlickException{
+	public void Render(Controller controller, Graphics g) throws SlickException{
 		float[] points = new float[6];
 		switch(this.side){
 			case DOWNLEFT:
@@ -43,14 +43,14 @@ public class TrianglePlatform extends Rigid implements Collision{
 			case DOWNRIGHT:
 				break;
 			case LEFT:
-				points = new float[] {positionX, positionY, positionX, positionY + height, positionX + width, positionY + height};
+				points = new float[] {super.getPositionX(), super.getPositionY(), super.getPositionX(), super.getPositionY() + super.getHeight(), super.getPositionX() + super.getWidth(), super.getPositionY() + super.getHeight()};
 				break;
 			case RIGHT:
-				points = new float[] {positionX + width, positionY, positionX, positionY + height, positionX + width, positionY + height};
+				points = new float[] {super.getPositionX() + super.getWidth(), super.getPositionY(), super.getPositionX(), super.getPositionY() + super.getHeight(), super.getPositionX() + super.getWidth(), super.getPositionY() + super.getHeight()};
 				break;
 		}
-		super.boundingBox = new Polygon(points);
-		g.draw(super.boundingBox);
+		super.setBoundingBox(new Polygon(points));
+		g.draw(super.getBoundingBox());
 	}
 
 	@Override

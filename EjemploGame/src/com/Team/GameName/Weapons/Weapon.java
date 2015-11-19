@@ -13,34 +13,20 @@ public abstract class Weapon extends Rigid {
 	protected float attackInterval;
 	protected float currentTime = 0;
 	
-	/*
-	protected float attackInterval = 0.2f;
-	protected float currentTime = 0;
-	
-	public Weapon() throws SlickException {
-		super();
-	}
-	
-	public boolean canAttack() {
-		return currentTime <= 0;
-	}
-	*/
-	
 	//Constructor
-	public Weapon(int damage, float attackInterval) throws SlickException{
-		super();
+	public Weapon(float positionX, float positionY, int width, int height) throws SlickException{
+		super(positionX, positionY, width, height);
+	}
+	
+	public Weapon(float positionX, float positionY, int width, int height, int damage, float attackInterval) throws SlickException{
+		super(positionX, positionY, width, height);
 		this.damage = damage;
 		this.attackInterval = attackInterval;
 	}
 	
 	//DealDamage method reduces the life of the character according to the damage
 	//of the weapon
-	public void dealDamage(Controller controller) throws SlickException{
-		Character ch = (Character)controller.checkCollision(this, 0, 0,Character.class);
-		if(ch != null){
-			ch.takeAwayLife(this.damage);
-		}
-	}
+	public abstract void dealDamage(Controller controller) throws SlickException;
 	
 	//Takes the attack interval and reduces it to zero, to not allow the player to 
 	//attack for a period of time
@@ -48,14 +34,6 @@ public abstract class Weapon extends Rigid {
 		return currentTime <= 0;
 	}
 	
-	@Override
-	public void init() throws SlickException {
-	}
-
-	@Override
-	public void Render(Graphics g, Controller controller) throws SlickException {
-	}
-
 	@Override
 	public void Update(Controller controller, int delta) throws SlickException {
 		if(currentTime >= 0){

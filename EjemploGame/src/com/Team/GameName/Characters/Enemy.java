@@ -1,65 +1,117 @@
 package com.Team.GameName.Characters;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
-import com.Team.GameName.Characters.Pirate1.State;
 import com.Team.GameName.Utilities.Controller;
+import com.Team.GameName.Utilities.States;;
 
 public abstract class Enemy extends Character{
+	//FIELDS
+	private float inicialPositionX;
+	private float visionRange;
+	private float attackRange;
 	
-	protected float x;
-	
-	public Enemy(float positionX, float positionY) throws SlickException {
-		super(positionX, positionY);
-		x = super.getPositionX();
+	//CONSTRUCTOR
+	public Enemy(float positionX, float positionY, int width, int height, float maxVelocityX) throws SlickException {
+		super(positionX, positionY, width, height, maxVelocityX);
+		this.inicialPositionX = super.getPositionX();
+	}
+	public Enemy(float positionX, float positionY, int width, int height, float maxVelocityX, float visionRange, float attackRange) throws SlickException {
+		this(positionX, positionY, width, height, maxVelocityX);
+		this.visionRange = visionRange;
+		this.attackRange = attackRange;
+	}
+	public Enemy(float positionX, float positionY, int width, int height, float maxVelocityX, float visionRange, float attackRange, float health) throws SlickException {
+		super(positionX, positionY, width, height, maxVelocityX, health);
+		this.inicialPositionX = super.getPositionX();
+		this.visionRange = visionRange;
+		this.attackRange = attackRange;
 	}
 	
+	//IMPLEMENTED METHODS
 	@Override
-	void applyDamage(Graphics g) throws SlickException {
-		
-	}
-	
-	public boolean checkSight(Controller controller, MainCharacter mc){
-		boolean OnSight = controller.doRayCast(this, positionX, positionY, 200, MainCharacter.class);
-		boolean CheckRange = controller.checkRange(mc, positionX, positionY, 20);
-		if (OnSight && CheckRange)
-		{
-			return true;
+	public void applyDamage(Graphics g) throws SlickException {
+		g.setColor(Color.red);
+		g.drawRect(super.getPositionX() + 5, super.getPositionY() - 11, 21, 6);
+		if(super.getHealth() > 0){
+			g.setColor(Color.green);
+			g.fillRect(super.getPositionX() + 5, super.getPositionY() - 10, super.getHealth() * 0.2f, 5);
 		}
-		return false;
+		g.setColor(Color.white);
 	}
 	
-	public void chase(Controller controller, float delta, MainCharacter Monillo) throws SlickException{
-		if(controller.getRange(this,Monillo) > 35)
+	//METHODS
+	public MainCharacter checkSight(Controller controller){
+		MainCharacter playerCast = controller.doRayCast(this, super.getPositionX(), super.getPositionY(), this.visionRange, MainCharacter.class);
+		MainCharacter playerRange = controller.checkRange(this, super.getPositionX(), super.getPositionY(), this.visionRange, MainCharacter.class);
+		if(playerCast != null && playerRange != null && playerCast == playerRange)
+			return playerCast;
+		else
+			return null;
+	}
+	public void chase(Controller controller, float delta, MainCharacter player) throws SlickException{
+		if(controller.getRange(this, player) > this.attackRange)
 		{
-			if(Monillo.getPositionX() < this.positionX){
-				this.move(controller, delta, Direction.Left);
-				setAnimation(State.WALKLEFT);
+			if(player.getPositionX() > super.getPositionX()){
+				super.setDirection(Direction.Right);
+				this.move(controller, delta);
+				//this.setAnimation(State.WALK);
+				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
+			}else if(player.getPositionX() < super.getPositionX()){
+				super.setDirection(Direction.Left);
+				this.move(controller, delta);
+				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
+			}else{
+				super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
 			}
-			if(Monillo.getPositionX() > this.positionX){
-				this.move(controller, delta, Direction.Right);
-				setAnimation(State.WALKRIGHT);
+		}else{
+			if(super.getCurrentWeapon() != null){
+				if(super.getCurrentWeapon().canAttack()){
+					this.attack(controller);
+					super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
+				}
 			}
 		}
 	}
-	
 	public void returnPosition(Controller controller, float delta) throws SlickException{
-		if(Math.abs(x - this.positionX) < 5){
-			this.move(controller, delta, Direction.Right);
-			setAnimation(State.WALKRIGHT);
-		}
-		if(Math.abs(x - this.positionX) > 5){
-			this.move(controller, delta, Direction.Left);
-			setAnimation(State.WALKLEFT);
+		float deltaX = this.inicialPositionX - super.getPositionX();
+		if(Math.abs(deltaX) > 4 && Math.abs(deltaX) < 6){
+			super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
+		}else{
+			if(deltaX > 0){
+				super.setDirection(Direction.Right);
+				this.move(controller, delta);
+				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
+			}else if(deltaX < 0){
+				super.setDirection(Direction.Left);
+				this.move(controller, delta);
+				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
+			}
 		}
 	}
 	
-	protected void setAnimation(State state){
-		super.currentAnimation = super.states[state.ordinal()];
+	//GETTERS AND SETTERS
+	public float getInicialPositionX() {
+		return inicialPositionX;
+	}
+	public void setInicialPositionX(float inicialPositionX) {
+		this.inicialPositionX = inicialPositionX;
+	}
+	public float getVisionRange() {
+		return visionRange;
+	}
+	public void setVisionRange(float visionRange) {
+		this.visionRange = visionRange;
+	}
+	public float getAttackRange() {
+		return attackRange;
+	}
+	public void setAttackRange(float attackRange) {
+		this.attackRange = attackRange;
 	}
 	
-	public void dead(){
-		
-	}
+	//ABSTRACT METHODS
+	public abstract void attack(Controller controller) throws SlickException;
 }

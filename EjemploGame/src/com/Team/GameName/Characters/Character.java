@@ -1,62 +1,64 @@
 package com.Team.GameName.Characters;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
-import com.Team.GameName.Characters.MainCharacter.State;
 import com.Team.GameName.Utilities.Controller;
 import com.Team.GameName.Utilities.GameObject;
 import com.Team.GameName.Weapons.Weapon;
 
 public abstract class Character extends GameObject{
-	
-	protected float health;
-	protected Weapon currentWeapon;
-	protected int currentState;
-	protected Animation[] states;
+	//FIELDS
+	private float maxHealth = 100;
+	private float currentHealth = 100;
+	private Weapon currentWeapon;
 	
 	//CONSTRUCTORS
 	public Character() throws SlickException {
 		super();
-		defineStates();
 	}
-	
 	public Character(float positionX, float positionY) throws SlickException {
 		super(positionX, positionY);
-		defineStates();
+	}
+	public Character(float positionX, float positionY, int width, int height, float maxVelocityX) throws SlickException {
+		super(positionX, positionY, width, height, maxVelocityX);
+	}
+	public Character(float positionX, float positionY, int width, int height, float maxVelocityX, float health) throws SlickException {
+		super(positionX, positionY, width, height, maxVelocityX);
+		this.maxHealth = health;
+		this.currentHealth = health;
 	}
 	
-	public Character(float positionX, float positionY, int width, int height) throws SlickException {
-		super(positionX, positionY, width, height);
-		defineStates();
+	//METHODS
+	public void takeAwayHealth(float damage){
+		this.currentHealth -= damage;
+	}
+	public void addHealth(float moreHealth){
+		this.currentHealth += moreHealth;
+		if(this.currentHealth > this.maxHealth){
+			this.currentHealth = this.maxHealth;
+		}
+	}
+	public boolean checkDead(Controller controller){
+		if(this.getHealth() <= 0){
+			controller.deleteControl();
+			return true;
+		}
+		return false;
 	}
 	
 	//GETTERS AND SETTERS
 	public Weapon getCurrentWeapon(){
 		return this.currentWeapon;
 	}
-	
 	public void setCurrentWeapon(Weapon weapon){
 		this.currentWeapon = weapon;
 	}
-	
-	protected Animation getAnimation(State state){
-		return states[state.ordinal()];
-	}
-	
-	protected void setAnimation(State state){
-		this.currentAnimation = this.states[state.ordinal()];
-	}
-	
-	public void takeAwayLife(int damage){
-		this.health -= damage;
+	public float getHealth(){
+		return currentHealth;
 	}
 	
 	//ABSTRACT METHODS
-	abstract void defineStates() throws SlickException;
-	
 	abstract void attack(Controller controller) throws SlickException;
-	
 	abstract void applyDamage(Graphics g) throws SlickException;
 }
