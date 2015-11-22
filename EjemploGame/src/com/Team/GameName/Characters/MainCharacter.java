@@ -14,6 +14,8 @@ import com.Team.GameName.Weapons.Sword;
 public class MainCharacter extends Character{
 	//FIELDS
 	private float jumpVelocity;
+	private Sword sword;
+	private Pistol pistol;
 	
 	//CONSTRUCTORS
 	public MainCharacter(float positionX, float positionY) throws SlickException{
@@ -22,57 +24,37 @@ public class MainCharacter extends Character{
 	
 	//IMPLEMENTED METHODS
 	@Override
-	public void init() throws SlickException {
+	public void Init() throws SlickException {
 		this.jumpVelocity = 2f;
+		this.setPistol(new Pistol(0,0));
+		this.setSword(new Sword(0,0));
+		this.getPistol().notVisible();
+		this.getSword().notVisible();
+		this.setCurrentWeapon(this.getPistol());
 	}
+	/*
 	@Override
-	public void Render(Controller controller, Graphics g) throws SlickException {
-		super.setBoundingBox();
-		if(super.getCurrentAnimation() != null){
-			if(super.getDirection() == Direction.Right)
-				super.getCurrentAnimation().draw(super.getPositionX(), super.getPositionY(), super.getWidth(), super.getHeight());
-			else
-				super.getCurrentAnimation().draw(super.getPositionX()+super.getWidth(), super.getPositionY(), -super.getWidth(), super.getHeight());
-		}
-		g.draw(super.getBoundingBox());
-		this.applyDamage(g);
-	}
-	@Override
-	public void Update(Controller controller, int delta) throws SlickException{
-		super.getCurrentAnimation().update(delta);
-		this.checkDead(controller);
-		if(super.getCurrentWeapon() != null){
-			if(super.getDirection() == Direction.Right){
-				super.getCurrentWeapon().setPositionX(super.getPositionX()+super.getWidth()+2);
-				super.getCurrentWeapon().setDirection(Direction.Right);
-			}else{
-				super.getCurrentWeapon().setPositionX(super.getPositionX()-4);
-				super.getCurrentWeapon().setDirection(Direction.Left);
-			}
-			super.getCurrentWeapon().setPositionY(super.getPositionY()+super.getHeight()/2.0f);
-		}
-	}
-	@Override
-	public void attack(Controller controller) throws SlickException {
+	public void attack() throws SlickException {
 		if(super.getCurrentWeapon() instanceof Sword){
-			((Sword)super.getCurrentWeapon()).swing(controller);
+			((Sword)super.getCurrentWeapon()).swing();
 		}else if(super.getCurrentWeapon() instanceof Pistol){
-			((Pistol)super.getCurrentWeapon()).shoot(controller);
+			((Pistol)super.getCurrentWeapon()).shoot();
 		}
 	}
+	*/
 	@Override
 	public void applyDamage(Graphics g) throws SlickException{
 		g.setColor(Color.red);
-		g.drawRect(super.getPositionX() + 5, super.getPositionY() - 11, 21, 6);
+		g.drawRect(this.getRealPositionX() + 5, this.getRealPositionY() - 11, 21, 6);
 		if(super.getHealth() > 0){
 			g.setColor(Color.green);
-			g.fillRect(super.getPositionX() + 5, super.getPositionY() - 10, super.getHealth() * 0.2f, 5);
+			g.fillRect(this.getRealPositionX() + 5, this.getRealPositionY() - 10, super.getHealth() * 0.2f, 5);
 		}
 		g.setColor(Color.white);
 	}
 
 	//METHODS
-	public void moverse(Controller controller, GameContainer gc, float delta) throws SlickException{
+	public void moverse(GameContainer gc, float delta) throws SlickException{
 		Input input = gc.getInput();
 		
 		if(input.isKeyPressed(Input.KEY_W)){
@@ -80,8 +62,24 @@ public class MainCharacter extends Character{
 		}else if(input.isKeyPressed(Input.KEY_SPACE)){
 			if(super.getCurrentWeapon() != null){
 				if(super.getCurrentWeapon().canAttack()){
-					this.attack(controller);
+					this.attack();
 					super.setCurrentAnimation(States.PLAYERATTACK.getAnimation());
+				}
+			}
+		}else if(input.isKeyPressed(Input.KEY_1)){
+			if(pistol != null){
+				super.setCurrentWeapon(pistol);
+				pistol.setVisible();
+				if(sword != null){
+					sword.notVisible();
+				}
+			}
+		}else if(input.isKeyPressed(Input.KEY_2)){
+			if(sword != null){
+				super.setCurrentWeapon(sword);
+				sword.setVisible();
+				if(pistol != null){
+					pistol.notVisible();
 				}
 			}
 		}else if(input.isKeyDown(Input.KEY_A) || input.isKeyDown(Input.KEY_D)){
@@ -91,22 +89,42 @@ public class MainCharacter extends Character{
 			if(input.isKeyDown(Input.KEY_D)){
 				super.setDirection(Direction.Right);
 			}
-			this.move(controller, delta);
+			this.move(delta);
 			super.setCurrentAnimation(States.PLAYERWALK.getAnimation());
 		}else{
+			super.resetCurrentVelocity();
 			super.setCurrentAnimation(States.PLAYERSTAND.getAnimation());
 		}
-		this.gravity(controller, delta);
+		this.gravity(delta);
 	}
 	public void jump(){
 		super.setInicialVelocityY(jumpVelocity);
 	}
-	@Override
-	public boolean checkDead(Controller controller){
-		if(super.checkDead(controller)){
-			controller.gameOver = true;
+	
+	public boolean checkDead(){
+		if(super.getHealth() <= 0){
+			Controller.GameOver();
 			return true;
 		}
 		return false;
+	}
+	
+	//GETTERS AND SETTERS
+	public Sword getSword() {
+		return sword;
+	}
+
+	public void setSword(Sword sword) {
+		Controller.add(sword);
+		this.sword = sword;
+	}
+
+	public Pistol getPistol() {
+		return pistol;
+	}
+
+	public void setPistol(Pistol pistol) {
+		Controller.add(pistol);
+		this.pistol = pistol;
 	}
 }

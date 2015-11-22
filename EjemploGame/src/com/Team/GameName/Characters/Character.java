@@ -5,6 +5,8 @@ import org.newdawn.slick.SlickException;
 
 import com.Team.GameName.Utilities.Controller;
 import com.Team.GameName.Utilities.GameObject;
+import com.Team.GameName.Weapons.Pistol;
+import com.Team.GameName.Weapons.Sword;
 import com.Team.GameName.Weapons.Weapon;
 
 public abstract class Character extends GameObject{
@@ -29,6 +31,34 @@ public abstract class Character extends GameObject{
 		this.currentHealth = health;
 	}
 	
+	//IMPLEMENTED METHODS
+	@Override
+	public void Render(Graphics g) throws SlickException {
+		super.setBoundingBox();
+		this.applyDamage(g);
+		if(super.getCurrentAnimation() != null){
+			if(super.getDirection() == Direction.Right)
+				super.getCurrentAnimation().draw(super.getRealPositionX(), super.getRealPositionY(), super.getWidth(), super.getHeight());
+			else
+				super.getCurrentAnimation().draw(super.getRealPositionX()+super.getWidth(), super.getRealPositionY(), -super.getWidth(), super.getHeight());
+		}
+	}
+	@Override
+	public void Update(int delta) throws SlickException{
+		super.getCurrentAnimation().update(delta);
+		this.checkDead();
+		if(this.getCurrentWeapon() != null){
+			if(this.getDirection() == Direction.Right){
+				this.getCurrentWeapon().setPositionX(this.getPositionX()+super.getWidth()+2);
+				this.getCurrentWeapon().setDirection(Direction.Right);
+			}else{
+				this.getCurrentWeapon().setPositionX(this.getPositionX()-this.getCurrentWeapon().getWidth()-4);
+				this.getCurrentWeapon().setDirection(Direction.Left);
+			}
+			this.getCurrentWeapon().setPositionY(super.getPositionY()+super.getHeight()/2.0f);
+		}
+	}
+	
 	//METHODS
 	public void takeAwayHealth(float damage){
 		this.currentHealth -= damage;
@@ -39,12 +69,16 @@ public abstract class Character extends GameObject{
 			this.currentHealth = this.maxHealth;
 		}
 	}
-	public boolean checkDead(Controller controller){
-		if(this.getHealth() <= 0){
-			controller.deleteControl();
-			return true;
+	public void attack() throws SlickException {
+		if(this.getCurrentWeapon() instanceof Sword){
+			if(((Sword)this.getCurrentWeapon()).canAttack()){
+				((Sword)this.getCurrentWeapon()).swing();
+			}
+		}else if(this.getCurrentWeapon() instanceof Pistol){
+			if(((Pistol)this.getCurrentWeapon()).canAttack()){
+				((Pistol)this.getCurrentWeapon()).shoot();
+			}
 		}
-		return false;
 	}
 	
 	//GETTERS AND SETTERS
@@ -52,6 +86,8 @@ public abstract class Character extends GameObject{
 		return this.currentWeapon;
 	}
 	public void setCurrentWeapon(Weapon weapon){
+		Controller.add(weapon);
+		weapon.setVisible();
 		this.currentWeapon = weapon;
 	}
 	public float getHealth(){
@@ -59,6 +95,6 @@ public abstract class Character extends GameObject{
 	}
 	
 	//ABSTRACT METHODS
-	abstract void attack(Controller controller) throws SlickException;
 	abstract void applyDamage(Graphics g) throws SlickException;
+	abstract boolean checkDead();
 }

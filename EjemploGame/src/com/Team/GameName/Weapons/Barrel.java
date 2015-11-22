@@ -10,33 +10,37 @@ import com.Team.GameName.Utilities.Rigid;
 import com.Team.GameName.Characters.Character;
 
 public class Barrel extends Weapon {
-
+	//FIELDS
+	private float range;
+	
+	//CONSTRUCTORS
 	public Barrel(float positionX, float positionY) throws SlickException {
-		super(positionX, positionY, 40, 25, 20, 1f);
+		super(positionX, positionY, 40, 25, 50, 1f);
 	}
 
-	public void explode(Controller controller){
-		LinkedList<Character> ch = controller.checkRangeList(this, this.getPositionX(), this.getPositionY(), 100,Character.class);
-		
-		for(Character object : ch){
-			object.takeAwayHealth(this.damage);
+	//METHODS
+	public void explode(){
+		LinkedList<Character> ch = Controller.checkRangeList(this, this.getPositionX(), this.getPositionY(), this.range,Character.class);
+		if(ch != null){
+			for(Character object : ch){
+				object.takeAwayHealth(this.damage);
+			}
 		}
-		controller.remove(this);
+		Controller.deleteControl(this);
 	}
 
 	@Override
-	public void dealDamage(Controller controller) throws SlickException {
+	public void dealDamage() throws SlickException {
 		
 	}
 
 	@Override
-	public void init() throws SlickException {
-		
+	public void Init() throws SlickException {
+		this.range = 80;
 	}
 
 	@Override
-	public void Render(Controller controller, Graphics g) throws SlickException {
+	public void Render(Graphics g) throws SlickException {
 		super.setBoundingBox();
-		g.draw(super.getBoundingBox());
 	}
 }

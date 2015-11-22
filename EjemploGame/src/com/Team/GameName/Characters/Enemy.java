@@ -34,34 +34,42 @@ public abstract class Enemy extends Character{
 	@Override
 	public void applyDamage(Graphics g) throws SlickException {
 		g.setColor(Color.red);
-		g.drawRect(super.getPositionX() + 5, super.getPositionY() - 11, 21, 6);
+		g.drawRect(this.getRealPositionX() + 5, this.getRealPositionY() - 11, 21, 6);
 		if(super.getHealth() > 0){
 			g.setColor(Color.green);
-			g.fillRect(super.getPositionX() + 5, super.getPositionY() - 10, super.getHealth() * 0.2f, 5);
+			g.fillRect(this.getRealPositionX() + 5, this.getRealPositionY() - 10, super.getHealth() * 0.2f, 5);
 		}
 		g.setColor(Color.white);
 	}
+	@Override
+	public boolean checkDead(){
+		if(this.getHealth() <= 0){
+			Controller.deleteControl(this);
+			return true;
+		}
+		return false;
+	}
 	
 	//METHODS
-	public MainCharacter checkSight(Controller controller){
-		MainCharacter playerCast = controller.doRayCast(this, super.getPositionX(), super.getPositionY(), this.visionRange, MainCharacter.class);
-		MainCharacter playerRange = controller.checkRange(this, super.getPositionX(), super.getPositionY(), this.visionRange, MainCharacter.class);
+	public MainCharacter checkSight(){
+		MainCharacter playerCast = Controller.doRayCast(this, this.visionRange, 400, MainCharacter.class);
+		MainCharacter playerRange = Controller.checkRange(this, super.getPositionX(), super.getPositionY(), this.visionRange, MainCharacter.class);
 		if(playerCast != null && playerRange != null && playerCast == playerRange)
 			return playerCast;
 		else
 			return null;
 	}
-	public void chase(Controller controller, float delta, MainCharacter player) throws SlickException{
-		if(controller.getRange(this, player) > this.attackRange)
+	public void chase(float delta, MainCharacter player) throws SlickException{
+		if(Controller.getRange(this, player) > this.attackRange)
 		{
 			if(player.getPositionX() > super.getPositionX()){
 				super.setDirection(Direction.Right);
-				this.move(controller, delta);
-				//this.setAnimation(State.WALK);
+				
+				this.move(delta);
 				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
 			}else if(player.getPositionX() < super.getPositionX()){
 				super.setDirection(Direction.Left);
-				this.move(controller, delta);
+				this.move(delta);
 				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
 			}else{
 				super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
@@ -69,29 +77,22 @@ public abstract class Enemy extends Character{
 		}else{
 			if(super.getCurrentWeapon() != null){
 				if(super.getCurrentWeapon().canAttack()){
-					this.attack(controller);
+					this.attack();
 					super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
 				}
 			}
 		}
 	}
-	public void returnPosition(Controller controller, float delta) throws SlickException{
-		float deltaX = this.inicialPositionX - super.getPositionX();
-		if(Math.abs(deltaX) > 4 && Math.abs(deltaX) < 6){
-			super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
+	public void returnPosition(float delta) throws SlickException{
+		if(!moveTo(delta, inicialPositionX, 6)){
+			super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
 		}else{
-			if(deltaX > 0){
-				super.setDirection(Direction.Right);
-				this.move(controller, delta);
-				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
-			}else if(deltaX < 0){
-				super.setDirection(Direction.Left);
-				this.move(controller, delta);
-				super.setCurrentAnimation(States.ENEMYWALK.getAnimation());
-			}
+			super.resetCurrentVelocity();
+			super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
 		}
+		
 	}
-	
+
 	//GETTERS AND SETTERS
 	public float getInicialPositionX() {
 		return inicialPositionX;
@@ -111,7 +112,4 @@ public abstract class Enemy extends Character{
 	public void setAttackRange(float attackRange) {
 		this.attackRange = attackRange;
 	}
-	
-	//ABSTRACT METHODS
-	public abstract void attack(Controller controller) throws SlickException;
 }

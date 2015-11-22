@@ -2,6 +2,8 @@ package com.Team.GameName.Characters;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Rectangle;
 
 import com.Team.GameName.Utilities.Controller;
 import com.Team.GameName.Utilities.States;
@@ -18,41 +20,45 @@ public class Pirate2 extends Enemy{
 
 	//IMPLEMENTED METHODS
 	@Override
-	public void init() throws SlickException {
+	public void Init() throws SlickException {
 		super.setCurrentAnimation(States.ENEMYSTAND.getAnimation());
 	}
 	@Override
-	public void Render(Controller controller, Graphics g) throws SlickException {
+	public void Render(Graphics g) throws SlickException {
 		super.setBoundingBox();
 		if(super.getCurrentAnimation() != null){
 			if(super.getDirection() == Direction.Right)
-				super.getCurrentAnimation().draw(super.getPositionX(), super.getPositionY(), super.getWidth(), super.getHeight());
+				super.getCurrentAnimation().draw(super.getRealPositionX(), super.getRealPositionY(), super.getWidth(), super.getHeight());
 			else
-				super.getCurrentAnimation().draw(super.getPositionX()+super.getWidth(), super.getPositionY(), -super.getWidth(), super.getHeight());
+				super.getCurrentAnimation().draw(super.getRealPositionX()+super.getWidth(), super.getRealPositionY(), -super.getWidth(), super.getHeight());
 		}
 		this.applyDamage(g);
-		g.draw(super.getBoundingBox());
 	}
+	
 	@Override
-	public void Update(Controller controller, int delta) throws SlickException {
+	public void Update(int delta) throws SlickException {
 		super.getCurrentAnimation().update(delta);
-		if(super.getDirection() == Direction.Right){
-			super.getCurrentWeapon().setPositionX(super.getPositionX()+super.getWidth()+2);
-			super.getCurrentWeapon().setDirection(Direction.Right);
-		}else{
-			super.getCurrentWeapon().setPositionX(super.getPositionX()-4);
-			super.getCurrentWeapon().setDirection(Direction.Left);
+		super.checkDead();
+		if(super.getCurrentWeapon() != null){
+			if(super.getDirection() == Direction.Right){
+				super.getCurrentWeapon().setPositionX(super.getPositionX()+super.getWidth()+2);
+				super.getCurrentWeapon().setDirection(Direction.Right);
+			}else{
+				super.getCurrentWeapon().setPositionX(super.getPositionX()-4);
+				super.getCurrentWeapon().setDirection(Direction.Left);
+			}
+			super.getCurrentWeapon().setPositionY(super.getPositionY()+super.getHeight()/2.0f);
 		}
-		super.getCurrentWeapon().setPositionY(super.getPositionY()+super.getHeight()/2.0f);
-		this.gravity(controller, delta);
-		MainCharacter player = checkSight(controller);
-		if (player != null)
-			chase(controller, delta, player);
-		else
-			returnPosition(controller, delta);
+		this.gravity(delta);
+		MainCharacter player = checkSight();
+		if (player != null){
+			chase(delta, player);
+		}else{
+			returnPosition(delta);
+		}
 	}
 	@Override
-	public void attack(Controller controller) throws SlickException {
-		((Sword)super.getCurrentWeapon()).swing(controller);
+	public void attack() throws SlickException {
+		((Sword)super.getCurrentWeapon()).swing();
 	}
 }

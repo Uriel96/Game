@@ -1,6 +1,7 @@
 package com.Team.GameName.Utilities;
 
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -16,6 +17,7 @@ public abstract class Rigid{
 	private int widthImage;
 	private int heightImage;
 	private boolean repeat;
+	private boolean visible = true;
 	private Animation currentAnimation;
 	private Shape boundingBox;
 	private Direction currentDirection = Direction.Right;
@@ -25,33 +27,45 @@ public abstract class Rigid{
 	
 	//CONSTRUCTORS
 	public Rigid() throws SlickException{
-		init();
+		Init();
 	}
 	public Rigid(float positionX, float positionY) throws SlickException{
 		this.positionX = positionX;
 		this.positionY = positionY;
-		init();
+		Init();
 	}
 	public Rigid(float positionX, float positionY, int width, int height) throws SlickException{
-		this(positionX, positionY);
+		this.positionX = positionX;
+		this.positionY = positionY;
 		this.width = width;
 		this.height = height;
 		this.widthImage = width;
 		this.heightImage = height;
 		this.boundingBox = new Rectangle(positionX, positionY, width, height);
-		init();
+		Init();
 	}
 	public Rigid(float positionX, float positionY, int width, int height, int widthImage, int heightImage, boolean repeat) throws SlickException{
-		this(positionX, positionY);
+		this.positionX = positionX;
+		this.positionY = positionY;
 		this.width = width;
 		this.height = height;
 		this.widthImage = widthImage;
 		this.heightImage = heightImage;
 		this.repeat = repeat;
-		init();
+		Init();
 	}
 	
 	//METHODS
+	public void render(Graphics g) throws SlickException{
+		if(this.isVisible()){
+			this.setBoundingBox();
+			this.drawObjectRelatively(g);
+			this.Render(g);
+		}
+	}
+	public void update(int delta) throws SlickException{
+		this.Update(delta);
+	}
 	/**
 	 * Función que checa si hay colisión entre un objeto y si mismo.
 	 * @param other Objeto con el que se desea checar si tiene una colisión.
@@ -59,6 +73,20 @@ public abstract class Rigid{
 	 */
 	public boolean intersects(Rigid other) {
 	    return other.getBoundingBox() == null ? false : this.getBoundingBox().intersects(other.getBoundingBox());
+	}
+	
+	public void drawObjectRelatively(Graphics g){
+		g.setColor(Color.green);
+		g.setLineWidth(2);
+		g.drawRect(this.getRealPositionX(), this.getRealPositionY(), this.width, this.height);
+		g.setColor(Color.white);
+	}
+	
+	public void drawObjectAbsolute(Graphics g){
+		g.setColor(Color.red);
+		g.setLineWidth(1);
+		g.drawRect(this.positionX, this.positionY, this.width, this.height);
+		g.setColor(Color.white);
 	}
 	
 	//GETTERS AND SETTERS
@@ -69,7 +97,10 @@ public abstract class Rigid{
 		this.currentDirection = direction;
 	}
 	public float getPositionX() {
-		return positionX;
+		return this.positionX;
+	}
+	public float getRealPositionX() {
+		return this.positionX-Controller.getPositionX();
 	}
 	public void addPositionX(float deltaX){
 		this.positionX += deltaX;
@@ -79,6 +110,9 @@ public abstract class Rigid{
 	}
 	public float getPositionY() {
 		return positionY;
+	}
+	public float getRealPositionY() {
+		return positionY-Controller.getPositionY();
 	}
 	public void addPositionY(float deltaY){
 		this.positionY -= deltaY;
@@ -111,11 +145,20 @@ public abstract class Rigid{
 		return this.boundingBox;
 	}
 	public void setBoundingBox() {
-		this.boundingBox = new Rectangle(this.positionX,this.positionY,this.width,this.height);
+		this.boundingBox = new Rectangle(this.getPositionX(),this.getPositionY(),this.width,this.height);
 	}
 	public void setBoundingBox(Shape shape) {
 		this.boundingBox = shape;
 	}
+	public boolean isVisible() {
+		return visible;
+	}
+	public void setVisible() {
+		this.visible = true;
+	}
+	public void notVisible(){
+		this.visible = false;
+	}	
 	public Animation getAnimation(Image i, int spriteX, int spriteY, int spriteWidth, int spriteHeight, int frames, int duration){
 		Animation a = new Animation(false);
 		for(int y = 0; y < spriteY; y++){
@@ -131,19 +174,19 @@ public abstract class Rigid{
 	 * Función que realiza las instrucciones que se desea ejecutar antes de crear el objeto.
 	 * @throws SlickException
 	 */
-	public abstract void init() throws SlickException;
+	public abstract void Init() throws SlickException;
 	/**
 	 * Función que muestra algún grafico en la pantalla.
 	 * @param controller Controlador que guarda las instancias de los objetos.
 	 * @param g Los graficos con los que se desea poder mostrar algo en la pantalla.
 	 * @throws SlickException
 	 */
-	public abstract void Render(Controller controller, Graphics g) throws SlickException;
+	public abstract void Render(Graphics g) throws SlickException;
 	/**
 	 * Función que Actualiza constantemente procesos del objeto.
 	 * @param controller Controlador que guarda las instancias de los objetos.
 	 * @param delta Tiempo transcurrido entre frames.
 	 * @throws SlickException
 	 */
-	public abstract void Update(Controller controller, int delta) throws SlickException;
+	public abstract void Update(int delta) throws SlickException;
 }
